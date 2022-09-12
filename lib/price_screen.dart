@@ -5,6 +5,8 @@ class PriceScreen extends StatefulWidget {
   _PriceScreenState createState() => _PriceScreenState();
 }
 
+  String selectedCurrency = 'USD'; //initial value of what we want to see in the dropdown
+
 class _PriceScreenState extends State<PriceScreen> {
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,25 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: null,
+
+            child: DropdownButton<String>(
+                value: selectedCurrency, //specifying the default/starting value shown, its normally the first item on the list
+                items: [
+                  DropdownMenuItem(
+                    child: Text("USD"),
+                    value: 'USD',
+                  ),
+                  DropdownMenuItem(
+                    child: Text("GBP"),
+                    value: 'GBP',
+                  ),
+                  DropdownMenuItem(child: Text('EUR'), value: 'EUR',),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    selectedCurrency = value; //updating the current state of the button ie tapping into the users selected currency
+                  });
+                }),
           ),
         ],
       ),
