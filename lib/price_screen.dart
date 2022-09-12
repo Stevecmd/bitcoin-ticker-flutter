@@ -11,15 +11,20 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'USD'; //initial value of what we want to see in the dropdown
 
-  void getDropdownItems() { //populating the drop down items automatically
-    for(int i = 0; i < currenciesList.length; i++){
-      print(i);
+  List<DropdownMenuItem> getDropdownItems() { //populating the drop down items automatically
+    List<DropdownMenuItem<String>> dropdownItems = []; //1. list of dropdown menu items that contain a string as their child
+    for(int i = 0; i < currenciesList.length; i++){ //2. loop through currencies list
+      String currency = currenciesList[i];
+      var newItem = DropdownMenuItem( //for every currency in the list we create a new dropdown menu item
+        child: Text(currency), value: currency,);
+      dropdownItems.add(newItem); //once the above widget is created we add it to a dropdown list
     }
+    return dropdownItems;
   }
 
   @override
   Widget build(BuildContext context) {
-    getDropdownItems(); //calling the function
+    getDropdownItems(); //calling the function in the build method so that it returns on every hot reload
 
     return Scaffold(
       appBar: AppBar(
@@ -58,17 +63,7 @@ class _PriceScreenState extends State<PriceScreen> {
 
             child: DropdownButton<String>(
                 value: selectedCurrency, //specifying the default/starting value shown, its normally the first item on the list
-                items: [
-                  DropdownMenuItem(
-                    child: Text("USD"),
-                    value: 'USD',
-                  ),
-                  DropdownMenuItem(
-                    child: Text("GBP"),
-                    value: 'GBP',
-                  ),
-                  DropdownMenuItem(child: Text('EUR'), value: 'EUR',),
-                ],
+                items: getDropdownItems(),
                 onChanged: (value) {
                   setState(() {
                     selectedCurrency = value; //updating the current state of the button ie tapping into the users selected currency
