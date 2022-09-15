@@ -107,7 +107,7 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: getPicker(), //incorporating both the iOS and Android picker
+            child: Platform.isIOS ? iOSPicker() : androidDropdown(), //instead of using getPicker we can use this ternary operator
           ),
         ],
       ),
