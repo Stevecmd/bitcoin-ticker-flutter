@@ -69,6 +69,7 @@ class _PriceScreenState extends State<PriceScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     // getDropdownItems(); //calling the function in the build method so that it returns on every hot reload
