@@ -1,4 +1,4 @@
-const apiKey = '04DBFA62-2B6B-4D2F-A713-20F414513102'; //personal API key obtained from coinapi.io to enable live coin updates
+const apiKey = ''; //personal API key obtained from coinapi.io to enable live coin updates
 const coinAPIURL = 'https://rest.coinapi.io/v1/exchangerate';
 
 // class CoinModel {
