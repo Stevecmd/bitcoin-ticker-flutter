@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
-import 'dart:io' show Platform; //instead of downloading the whole file we can get a specific class from it
+import 'dart:io' show Platform; //Todo instead of downloading the whole file we can get a specific class from it
 
 import 'package:universal_io/io.dart';
 
@@ -58,16 +58,16 @@ class _PriceScreenState extends State<PriceScreen> {
 
   //value had to be updated into a Map to store the values of all three cryptocurrencies.
   Map<String, String> coinValues = {};
-  //7: Figure out a way of displaying a '?' on screen while we're waiting for the price data to come back. First we have to create a variable to keep track of when we're waiting on the request to complete.
+  //Todo 7: Figure out a way of displaying a '?' on screen while we're waiting for the price data to come back. First we have to create a variable to keep track of when we're waiting on the request to complete.
   bool isWaiting = false;
 
   void getData() async {
-    //7: Second, we set it to true when we initiate the request for prices.
+    //Todo 7.2: Second, we set it to true when we initiate the request for prices.
     isWaiting = true;
     try {
-      //6: Update this method to receive a Map containing the crypto:price key value pairs.
+      //Todo 6: Update this method to receive a Map containing the crypto:price key value pairs.
       var data = await CoinData().getCoinData(selectedCurrency);
-      //7. Third, as soon the above line of code completes, we now have the data and no longer need to wait. So we can set isWaiting to false.
+      //Todo 7.3 Third, as soon the above line of code completes, we now have the data and no longer need to wait. So we can set isWaiting to false.
       isWaiting = false;
       setState(() {
         coinValues = data;
@@ -94,13 +94,13 @@ class _PriceScreenState extends State<PriceScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          //3: You'll need to use a Column Widget to contain the three CryptoCards.
+          //Todo 3: You'll need to use a Column Widget to contain the three CryptoCards.
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               CryptoCard(
                 cryptoCurrency: 'BTC',
-                //7. Finally, we use a ternary operator to check if we are waiting and if so, we'll display a '?' otherwise we'll show the actual price data.
+                //Todo 7.4 Finally, we use a ternary operator to check if we are waiting and if so, we'll display a '?' otherwise we'll show the actual price data.
                 value: isWaiting ? '?' : coinValues['BTC'],
                 selectedCurrency: selectedCurrency,
               ),
@@ -130,9 +130,9 @@ class _PriceScreenState extends State<PriceScreen> {
   }
 }
 
-//1: Refactor this Padding Widget into a separate Stateless Widget called CryptoCard, so we can create 3 of them, one for each cryptocurrency.
+//Todo 1: Refactor this Padding Widget into a separate Stateless Widget called CryptoCard, so we can create 3 of them, one for each cryptocurrency.
 class CryptoCard extends StatelessWidget {
-  //2: You'll need to able to pass the selectedCurrency, value and cryptoCurrency to the constructor of this CryptoCard Widget.
+  //Todo 2: You'll need to able to pass the selectedCurrency, value and cryptoCurrency to the constructor of this CryptoCard Widget.
   const CryptoCard({
     this.value,
     this.selectedCurrency,
