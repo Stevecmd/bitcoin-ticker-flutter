@@ -3,83 +3,74 @@ import 'package:flutter/material.dart';
 import 'coin_data.dart';
 import 'dart:io' show Platform; //instead of downloading the whole file we can get a specific class from it
 
+import 'package:universal_io/io.dart';
+
 class PriceScreen extends StatefulWidget {
   @override
   _PriceScreenState createState() => _PriceScreenState();
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  //TODO 6: Update the default currency to AUD, the first item in the currencyList.
-  String selectedCurrency =
-      'USD'; //initial value of what we want to see in the dropdown
+  String selectedCurrency = 'AUD';
 
   DropdownButton<String> androidDropdown() {
-    //populating the drop down items automatically
-    List<DropdownMenuItem<String>> dropdownItems =
-    []; //1. list of dropdown menu items that contain a string as their child
-    for (int i = 0; i < currenciesList.length; i++) {
-      //2. loop through currencies list
-      String currency = currenciesList[i];
+    List<DropdownMenuItem<String>> dropdownItems = [];
+    for (String currency in currenciesList) {
       var newItem = DropdownMenuItem(
-        //for every currency in the list we create a new dropdown menu item
-        child: Text(currency), value: currency,
+        child: Text(currency),
+        value: currency,
       );
-      dropdownItems.add(
-          newItem); //once the above widget is created we add it to a dropdown list
+      dropdownItems.add(newItem);
     }
 
     return DropdownButton<String>(
-      value:
-          selectedCurrency, //specifying the default/starting value shown, its normally the first item on the list
+      value: selectedCurrency,
       items: dropdownItems,
       onChanged: (value) {
         setState(() {
-          //TODO 2: Call getData() when the picker/dropdown changes.
-          selectedCurrency =
-              value; //updating the current state of the button ie tapping into the users selected currency
+          selectedCurrency = value;
+          getData();
         });
       },
     );
   }
 
 
-  CupertinoPicker iOSPicker(){
-
-    //Dynamically getting the currencies
+  CupertinoPicker iOSPicker() {
     List<Text> pickerItems = [];
     for (String currency in currenciesList) {
-      //2. loop through currencies list
       pickerItems.add(Text(currency));
     }
 
     return CupertinoPicker(
-        backgroundColor: Colors.lightBlue,
-        itemExtent: 32.0,
-        onSelectedItemChanged: (selectedIndex) {
-          print(selectedIndex);
-          //TODO 1: Save the selected currency to the property selectedCurrency
-          //TODO 2: Call getData() when the picker/dropdown changes.
-        },
-        children: pickerItems,
+      backgroundColor: Colors.lightBlue,
+      itemExtent: 32.0,
+      onSelectedItemChanged: (selectedIndex) {
+        setState(() {
+          selectedCurrency = currenciesList[selectedIndex];
+          getData();
+        });
+      },
+      children: pickerItems,
     );
   }
 
 
-  Widget getPicker(){ //checking the platform app is being run on
-    if (Platform.isIOS){
-      return iOSPicker();
-    } else if (Platform.isAndroid){
-      return androidDropdown();
-    }
-  }
-
-  String bitcoinValue = '?';
+  //value had to be updated into a Map to store the values of all three cryptocurrencies.
+  Map<String, String> coinValues = {};
+  //7: Figure out a way of displaying a '?' on screen while we're waiting for the price data to come back. First we have to create a variable to keep track of when we're waiting on the request to complete.
+  bool isWaiting = false;
 
   void getData() async {
+    //7: Second, we set it to true when we initiate the request for prices.
+    isWaiting = true;
     try {
-      double data = await CoinData().getCoinData(bitcoinValue);
+      //6: Update this method to receive a Map containing the crypto:price key value pairs.
+      var data = await CoinData().getCoinData(selectedCurrency);
+      //7. Third, as soon the above line of code completes, we now have the data and no longer need to wait. So we can set isWaiting to false.
+      isWaiting = false;
       setState(() {
-        bitcoinValue = data.toStringAsFixed(0);
+        coinValues = data;
       });
     } catch (e) {
       print(e);
@@ -95,8 +86,6 @@ class _PriceScreenState extends State<PriceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // getDropdownItems(); //calling the function in the build method so that it returns on every hot reload
-
     return Scaffold(
       appBar: AppBar(
         title: Text('🤑 Coin Ticker'),
@@ -105,36 +94,76 @@ class _PriceScreenState extends State<PriceScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-            child: Card(
-              color: Colors.lightBlueAccent,
-              elevation: 5.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
+          //3: You'll need to use a Column Widget to contain the three CryptoCards.
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              CryptoCard(
+                cryptoCurrency: 'BTC',
+                //7. Finally, we use a ternary operator to check if we are waiting and if so, we'll display a '?' otherwise we'll show the actual price data.
+                value: isWaiting ? '?' : coinValues['BTC'],
+                selectedCurrency: selectedCurrency,
               ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: Text(
-                  //TODO 5: Update the currency name depending on the selectedCurrency.
-                  '1 BTC = $bitcoinValue USD',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
-                  ),
-                ),
+              CryptoCard(
+                cryptoCurrency: 'ETH',
+                value: isWaiting ? '?' : coinValues['ETH'],
+                selectedCurrency: selectedCurrency,
               ),
-            ),
+              CryptoCard(
+                cryptoCurrency: 'LTC',
+                value: isWaiting ? '?' : coinValues['LTC'],
+                selectedCurrency: selectedCurrency,
+              ),
+            ],
           ),
+
           Container(
             height: 150.0,
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: Platform.isIOS ? iOSPicker() : androidDropdown(), //instead of using getPicker we can use this ternary operator
+            child: Platform.isIOS ? iOSPicker() : androidDropdown(),
           ),
         ],
+      ),
+    );
+  }
+}
+
+//1: Refactor this Padding Widget into a separate Stateless Widget called CryptoCard, so we can create 3 of them, one for each cryptocurrency.
+class CryptoCard extends StatelessWidget {
+  //2: You'll need to able to pass the selectedCurrency, value and cryptoCurrency to the constructor of this CryptoCard Widget.
+  const CryptoCard({
+    this.value,
+    this.selectedCurrency,
+    this.cryptoCurrency,
+  });
+
+  final String value;
+  final String selectedCurrency;
+  final String cryptoCurrency;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+      child: Card(
+        color: Colors.lightBlueAccent,
+        elevation: 5.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+          child: Text(
+            '1 $cryptoCurrency = $value $selectedCurrency',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20.0,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
     );
   }

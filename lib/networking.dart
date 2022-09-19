@@ -21,11 +21,3 @@ class NetworkHelper{
 }
 
 
-// if (response.statusCode == 200) {
-// var decodedData = jsonDecode(response.body);
-// var lastPrice = decodedData['rate'];
-// return lastPrice;
-// } else {
-// print(response.statusCode);
-// throw 'Problem with the get request';
-// }
