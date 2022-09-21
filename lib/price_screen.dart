@@ -88,7 +88,7 @@ class _PriceScreenState extends State<PriceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('🤑 Coin Ticker'),
+        title: Center(child: Text('👨‍🏫 Coin Ticker - Wallet converter')),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -98,21 +98,24 @@ class _PriceScreenState extends State<PriceScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              CryptoCard(
-                cryptoCurrency: 'BTC',
+              CryptoCard (
+                cryptoCurrency: '🌕 BTC',
                 //Todo 7.4 Finally, we use a ternary operator to check if we are waiting and if so, we'll display a '?' otherwise we'll show the actual price data.
                 value: isWaiting ? '?' : coinValues['BTC'],
                 selectedCurrency: selectedCurrency,
+                color: Colors.blueGrey,
               ),
               CryptoCard(
-                cryptoCurrency: 'ETH',
+                cryptoCurrency: '🪙 ETH',
                 value: isWaiting ? '?' : coinValues['ETH'],
                 selectedCurrency: selectedCurrency,
+                  color: Colors.blueGrey[900],
               ),
               CryptoCard(
-                cryptoCurrency: 'LTC',
+                cryptoCurrency: '💱 LTC',
                 value: isWaiting ? '?' : coinValues['LTC'],
                 selectedCurrency: selectedCurrency,
+                color: Colors.blueGrey[900],
               ),
             ],
           ),
@@ -121,7 +124,7 @@ class _PriceScreenState extends State<PriceScreen> {
             height: 150.0,
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
-            color: Colors.lightBlue,
+            color: Colors.indigoAccent,
             child: Platform.isIOS ? iOSPicker() : androidDropdown(),
           ),
         ],
@@ -136,19 +139,20 @@ class CryptoCard extends StatelessWidget {
   const CryptoCard({
     this.value,
     this.selectedCurrency,
-    this.cryptoCurrency,
+    this.cryptoCurrency, this.color,
   });
 
   final String value;
   final String selectedCurrency;
   final String cryptoCurrency;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
       child: Card(
-        color: Colors.lightBlueAccent,
+        color: Colors.indigo,
         elevation: 5.0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -156,7 +160,7 @@ class CryptoCard extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
           child: Text(
-            '1 $cryptoCurrency = $value $selectedCurrency',
+            ' $cryptoCurrency 1 = $value $selectedCurrency',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 20.0,
